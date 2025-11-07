@@ -1,194 +1,199 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Cloud</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-        :root{
-            --bg: #f8f9fa;
-            --card: #ffffff;
-            --accent: #4361ee;
-            --text: #212529;
-            --light: #f1f3f5;
-        }
-        *{margin:0;box-sizing:border-box;}
-        body{
-            margin:0; min-height:100vh;
-            font-family:'Inter',sans-serif;
-            background:var(--bg);
-            color:var(--text);
-            display:flex; align-items:center; justify-content:center;
-            padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-        }
-
-        /* === DESKTOP === */
-        .desktop .card{
-            background:var(--card);
-            padding:2.5rem;
-            width:90%; max-width:460px;
-            border-radius:20px;
-            box-shadow:0 10px 30px rgba(0,0,0,0.1);
-            text-align:center;
-        }
-        .desktop h1{
-            font-size:2rem; margin-bottom:0.5rem;
-            background:linear-gradient(90deg,#4361ee,#3f37c9);
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-        }
-
-        /* === MOBILE === */
-        .mobile{
-            background:#f1f3f5;
-        }
-        .mobile .card{
-            width:100%; height:100vh;
-            padding:1.5rem; border-radius:0;
-            display:flex; flex-direction:column;
-        }
-        .mobile h1{
-            font-size:1.6rem; text-align:center;
-            color:var(--accent); margin-bottom:0.5rem;
-        }
-        .mobile .hint{
-            font-size:0.95rem; text-align:center; opacity:0.7; margin-bottom:1rem;
-        }
-
-        /* ZONE COMMUNE */
-        .drop-zone{
-            flex:1; min-height:280px;
-            border:3px dashed var(--accent);
-            border-radius:16px;
-            margin:1.5rem 0;
-            padding:2rem;
-            cursor:pointer;
-            background:rgba(67,97,238,0.05);
-            display:flex; flex-direction:column;
-            justify-content:center; align-items:center;
-            transition:0.3s;
-        }
-        .drop-zone:hover{ background:rgba(67,97,238,0.1); }
-        .drop-zone.dragover{
-            background:rgba(67,97,238,0.15);
-            border-color:#3f37c9;
-            transform:scale(1.02);
-        }
-        .drop-zone p{
-            margin:0.5rem 0; font-weight:600; font-size:1.1rem;
-        }
-
-        /* LISTE */
-        .files{
-            background:var(--light);
-            border-radius:12px; padding:1rem;
-            max-height:40vh; overflow-y:auto;
-        }
-        .file{
-            background:#fff; padding:0.9rem;
-            margin:0.5rem 0; border-radius:10px;
-            display:flex; justify-content:space-between;
-            align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.05);
-        }
-        .file a{
-            color:var(--accent); text-decoration:none; font-weight:500;
-        }
-        .delete{
-            color:#e03131; font-weight:bold; cursor:pointer; font-size:1.3rem;
-        }
-
-        /* BOUTON FLOTTANT MOBILE */
-        .fab{
-            position:fixed; bottom:20px; right:20px;
-            width:56px; height:56px;
-            background:var(--accent); color:#fff;
-            border-radius:50%; box-shadow:0 6px 20px rgba(67,97,238,0.4);
-            display:flex; align-items:center; justify-content:center;
-            font-size:1.8rem; cursor:pointer; z-index:10;
-        }
-
-        input[type="file"]{display:none;}
-        .hidden{display:none !important;}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Cloud Pro</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+    :root{--bg:#f8f9fa;--card:#fff;--accent:#4361ee;--text:#212529;}
+    *{margin:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+    body{min-height:100vh;background:var(--bg);color:var(--text);padding:2rem;}
+    .card{background:var(--card);padding:2rem;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.1);max-width:500px;margin:auto;text-align:center;}
+    .mobile .card{height:100vh;border-radius:0;padding:1.5rem;}
+    h1{font-size:2rem;background:linear-gradient(90deg,#4361ee,#3f37c9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .btn{background:var(--accent);color:white;padding:1rem 2rem;border:none;border-radius:50px;cursor:pointer;font-weight:600;margin:1rem 0;}
+    .fab{position:fixed;bottom:20px;right:20px;width:60px;height:60px;background:var(--accent);color:white;border-radius:50%;font-size:2rem;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(67,97,238,0.4);z-index:10;}
+    .drop-zone{border:3px dashed var(--accent);border-radius:16px;padding:3rem;margin:1.5rem 0;cursor:pointer;background:rgba(67,97,238,0.05);transition:0.3s;}
+    .drop-zone.dragover{background:rgba(67,97,238,0.15);border-color:#3f37c9;}
+    .files{background:#f1f3f5;border-radius:12px;padding:1rem;max-height:40vh;overflow-y:auto;}
+    .file{background:white;padding:1rem;margin:0.5rem 0;border-radius:10px;display:flex;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+    .file a{color:var(--accent);text-decoration:none;}
+    .transfer{margin:1rem 0;padding:1rem;background:#e7f3ff;border-radius:12px;}
+    .hidden{display:none !important;}
+  </style>
 </head>
 <body>
 
-    <!-- DESKTOP -->
-    <div class="card hidden" id="desktop">
-        <h1>Mon Cloud</h1>
-        <p style="opacity:0.7;margin-bottom:1rem;">Glisse ou clique pour uploader</p>
-        <div class="drop-zone" id="zoneDesk">
-            <p>Depose ici</p>
-            <input type="file" id="pickerDesk" multiple>
-        </div>
-        <div class="files" id="listDesk"></div>
+  <!-- LOGIN -->
+  <div id="login" class="card">
+    <h1>Mon Cloud Pro</h1>
+    <p>Connecte-toi avec Google</p>
+    <button class="btn" id="googleBtn">Se connecter avec Google</button>
+  </div>
+
+  <!-- APP -->
+  <div id="app" class="card hidden">
+    <h1>Bonjour <span id="userName"></span></h1>
+    <p id="userEmail" style="opacity:0.7;"></p>
+
+    <!-- TRANSFERT -->
+    <div class="transfer">
+      <input type="email" id="destEmail" placeholder="Email du destinataire" style="width:100%;padding:0.8rem;border-radius:8px;border:1px solid #ccc;margin:0.5rem 0;">
+      <button class="btn" id="sendBtn" style="width:100%;">Envoyer le fichier sélectionné</button>
     </div>
 
-    <!-- MOBILE -->
-    <div class="card hidden" id="mobile">
-        <h1>Mon Cloud</h1>
-        <div class="hint">Appuie sur + ou ici</div>
-        <div class="drop-zone" id="zoneMob">
-            <p>Ajouter des fichiers</p>
-            <input type="file" id="pickerMob" multiple>
-        </div>
-        <div class="files" id="listMob"></div>
-        <div class="fab" id="fab">+</div>
+    <div class="drop-zone" id="zone">
+      <p>Ajouter des fichiers</p>
+      <input type="file" id="picker" multiple>
     </div>
+    <div class="files" id="list"></div>
+    <div class="fab" id="fab">+</div>
+  </div>
 
-    <script>
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || screen.width < 768;
-        const desktop = document.getElementById('desktop');
-        const mobile  = document.getElementById('mobile');
-        document.body.className = isMobile ? 'mobile' : 'desktop';
-        (isMobile ? mobile : desktop).classList.remove('hidden');
+  <script>
+    // ===== COLLER TA CONFIG FIREBASE ICI =====
+    const firebaseConfig = {
+      apiKey: "AIzaSy...",
+      authDomain: "ton-projet.firebaseapp.com",
+      projectId: "ton-projet",
+      storageBucket: "ton-projet.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abcdef123456"
+    };
+    // ========================================
 
-        // === INIT ===
-        const zone   = isMobile ? document.getElementById('zoneMob')  : document.getElementById('zoneDesk');
-        const picker = isMobile ? document.getElementById('pickerMob'): document.getElementById('pickerDesk');
-        const list   = isMobile ? document.getElementById('listMob')  : document.getElementById('listDesk');
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
 
-        // Clic = ouvre explorateur
-        zone.onclick = () => picker.click();
-        if (isMobile) document.getElementById('fab').onclick = () => picker.click();
+    const loginDiv = document.getElementById('login');
+    const appDiv = document.getElementById('app');
+    const googleBtn = document.getElementById('googleBtn');
+    const userName = document.getElementById('userName');
+    const userEmail = document.getElementById('userEmail');
+    const zone = document.getElementById('zone');
+    const picker = document.getElementById('picker');
+    const list = document.getElementById('list');
+    const fab = document.getElementById('fab');
+    const destEmail = document.getElementById('destEmail');
+    const sendBtn = document.getElementById('sendBtn');
 
-        // Drag & Drop
-        ['dragenter','dragover'].forEach(e=>zone.addEventListener(e,()=>zone.classList.add('dragover')));
-        ['dragleave','drop'].forEach(e=>zone.addEventListener(e,()=>zone.classList.remove('dragover')));
-        ['dragenter','dragover','dragleave','drop'].forEach(e=>zone.addEventListener(e,e=>{e.preventDefault();e.stopPropagation();}));
-        zone.ondrop = e => handle(e.dataTransfer.files);
-        picker.onchange = e => handle(e.target.files);
+    let currentUser = null;
+    let selectedFile = null;
 
-        function handle(files){
-            [...files].forEach(f => upload(f));
+    // === CONNEXION GOOGLE ===
+    googleBtn.onclick = () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider);
+    };
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        currentUser = user;
+        loginDiv.classList.add('hidden');
+        appDiv.classList.remove('hidden');
+        userName.textContent = user.displayName.split(' ')[0];
+        userEmail.textContent = user.email;
+        loadMyFiles();
+      } else {
+        loginDiv.classList.remove('hidden');
+        appDiv.classList.add('hidden');
+      }
+    });
+
+    // === MOBILE DETECTION ===
+    if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
+      document.body.classList.add('mobile');
+      fab.onclick = () => picker.click();
+      zone.onclick = () => picker.click();
+    } else {
+      zone.onclick = () => picker.click();
+    }
+
+    // === UPLOAD ===
+    picker.onchange = e => uploadFiles(e.target.files);
+    zone.ondrop = e => { e.preventDefault(); uploadFiles(e.dataTransfer.files); zone.classList.remove('dragover'); };
+    zone.ondragover = e => { e.preventDefault(); zone.classList.add('dragover'); };
+    zone.ondragleave = () => zone.classList.remove('dragover');
+
+    function uploadFiles(files) {
+      [...files].forEach(file => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const fileData = {
+            name: file.name,
+            data: reader.result,
+            owner: currentUser.uid,
+            ownerEmail: currentUser.email,
+            timestamp: Date.now()
+          };
+          db.collection('files').add(fileData).then(ref => {
+            addFileToList({...fileData, id: ref.id});
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // === AFFICHAGE ===
+    function addFileToList(file) {
+      const div = document.createElement('div');
+      div.className = 'file';
+      div.innerHTML = `
+        <span><a href="${file.data}" download="${file.name}">${file.name}</a></span>
+        <span style="cursor:pointer;color:#e03131;" onclick="this.parentElement.remove(); db.collection('files').doc('${file.id}').delete();">×</span>
+      `;
+      div.onclick = (e) => {
+        if (e.target.tagName !== 'A' && e.target.tagName !== 'SPAN') {
+          selectedFile = file;
+          destEmail.placeholder = `Envoyer ${file.name} à...`;
         }
+      };
+      list.prepend(div);
+    }
 
-        function upload(file){
-            const fd = new FormData();
-            fd.append('file', file);
-            fetch('upload.php', {method:'POST', body:fd})
-            .then(r=>r.json())
-            .then(res=>{
-                if(res.success) addFile(file.name, res.url);
-                else alert('Erreur');
-            });
-        }
+    // === CHARGER MES FICHIERS ===
+    function loadMyFiles() {
+      list.innerHTML = '';
+      db.collection('files').where('owner', '==', currentUser.uid).orderBy('timestamp', 'desc').onSnapshot(snap => {
+        list.innerHTML = '';
+        snap.forEach(doc => addFileToList({id: doc.id, ...doc.data()}));
+      });
+    }
 
-        function addFile(name, url){
-            const div = document.createElement('div');
-            div.className='file';
-            div.innerHTML = `<span><a href="${url}" target="_blank">${name}</a></span>
-                             <span class="delete" onclick="this.parentElement.remove()">X</span>`;
-            list.prepend(div);
-        }
+    // === TRANSFERT ===
+    sendBtn.onclick = () => {
+      if (!selectedFile) return alert('Clique sur un fichier d\'abord');
+      const email = destEmail.value.trim();
+      if (!email) return alert('Entre un email');
 
-        // Chargement initial
-        fetch('list.php')
-        .then(r=>r.json())
-        .then(files=>files.forEach(f=>addFile(f.name,f.url)));
+      db.collection('users').where('email', '==', email).get().then(snap => {
+        if (snap.empty) return alert('Utilisateur non trouvé');
 
-        // Vibration mobile
-        if(isMobile && navigator.vibrate) zone.ondrop = e=>{navigator.vibrate(30); handle(e.dataTransfer.files);};
-    </script>
+        snap.forEach(userDoc => {
+          const copy = {...selectedFile, owner: userDoc.data().uid, ownerEmail: email};
+          delete copy.id;
+          db.collection('files').add(copy).then(() => {
+            alert(`Envoyé à ${email} !`);
+            destEmail.value = '';
+          });
+        });
+      });
+    };
+
+    // === SAUVEGARDE EMAIL UTILISATEUR ===
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        db.collection('users').doc(user.uid).set({
+          email: user.email,
+          name: user.displayName
+        }, {merge: true});
+      }
+    });
+  </script>
 </body>
 </html>
