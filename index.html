@@ -1,219 +1,103 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mon Cloud Pro</title>
-  <!-- Firebase 10+ MODERNE (plus de bug popup) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<html lang="en" translate="no">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="./favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="theme-color" content="#EC6726" />
 
-    // ========= COLLER TA CONFIG FIREBASE ICI =========
-    const firebaseConfig = {
-      apiKey: "AIzaSy...",
-      authDomain: "ton-projet.firebaseapp.com",
-      projectId: "ton-projet",
-      storageBucket: "ton-projet.appspot.com",
-      messagingSenderId: "123456789",
-      appId: "1:123456789:web:abcdef123456"
-    };
-    // ================================================
+		<!-- Fonts -->
+		<link rel="stylesheet" href="./fonts/fonts.css" />
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
+		
+		<link href="./_app/immutable/assets/MaterialIcon.CdOqi7KB.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/SimpleAnchor.DQoo7WHu.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/Wrapper.DR2UVBkf.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/MainContainer.rY4QwBoM.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/IconAnchor.IL-PWY8t.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/Image.D5g5n4iL.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/0.OV2OXPiC.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/ButtonAnchor.CL7-T9uf.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/Title.CjrRex0E.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/3.71rciEPD.css" rel="stylesheet">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.B76io9no.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/Bo-cmrW-.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/BdTJreFH.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/vt-9umJn.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.BA01gi8H.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/Dp1pzeXC.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/DN-LgydS.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/_HBItMfe.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/B4GKpx-a.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/CWj6FrbW.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/C6hWjN32.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/D27yq7N3.js">
+		<link rel="modulepreload" href="./_app/immutable/nodes/0._ffNlkXh.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/CJgiMuUt.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/B2PJ018B.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/CnAJxf78.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/BWgAuno3.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/CxfjhUey.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/Cfyn-n7d.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/DSWIOirz.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/CvbMl_Bx.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/CcFu27tI.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/C3UfnBey.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/EkR3Ud-q.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/DYpSX47D.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/CyKlsSGo.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/CFBtLyLv.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/DgepurZ5.js">
+		<link rel="modulepreload" href="./_app/immutable/nodes/3.im8RygaM.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/OyyT2Rgx.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/DRPobTwB.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/BmCngrOa.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/CLj5v0lY.js">
+		<link rel="modulepreload" href="./_app/env.js"><!--[--><!--[--><meta property="og:title" content="Home"><!--]--> <meta name="description" content="The best way to play and create Portal community content. Portal 2: Community Edition is a community maintained game that can be used by anyone to create their own unique never before possible puzzles."> <meta property="og:description" content="The best way to play and create Portal community content. Portal 2: Community Edition is a community maintained game that can be used by anyone to create their own unique never before possible puzzles."> <meta property="og:site_name" content="Portal 2: Community Edition"> <meta property="og:url" content="http://sveltekit-prerender/"> <meta property="og:image" content="/_app/immutable/assets/preview.CFRF8Z3i.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="theme-color" content="#EC6726"><!--]--><title>Portal 2: Community Edition</title>
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents"><!--[--><!--[--><!----><div class="main-wrapper svelte-zlmdhe"><nav class="menu-hidden  svelte-z8fy91"><!--[!--><div class="main-container svelte-c9svg1"><div class="wrapper svelte-1gc071t"><!----><!----><div class="main-navbar svelte-z8fy91"><a href="/" class="svelte-z8fy91"><img class="logo svelte-z8fy91" src="/_app/immutable/assets/logo.CCKsA3AF.svg" alt="Portal 2: Community Edition"></a> <!--[!--><!--]--></div><!----><!----></div><!----></div><!--]--><!----> <!--[!--><!--]--></nav><!----> <main class="svelte-zlmdhe"><!----><!--[!--><!----><!----> <section class="banner-wrapper svelte-islsbl"><div class="img-wrapper banner-img svelte-34vu9d"><!--[--><div class="skeleton-background svelte-34vu9d"></div><!--]--> <img src="/_app/immutable/assets/autumn1.XKmKmQ4n.webp" alt="Banner" draggable="false" loading="lazy" class="svelte-34vu9d"></div><!----> <div class="content svelte-islsbl"><div class="wrapper svelte-1gc071t"><!----><div class="headline svelte-islsbl">The best way to <span class="svelte-islsbl">Play</span> and <span class="svelte-islsbl">Create</span> Portal community content.</div> <div class="subline svelte-islsbl">Coming soon to Steam.</div> <div class="actions svelte-islsbl"><a class="button svelte-68f0a1 enabled" href="https://steampowered.com/app/440000" target="_blank"><!----><!---->Wishlist on Steam<!----></a><!----> <a class="button svelte-68f0a1 enabled" href="https://discord.gg/rwrJMaXrEv" target="_blank"><!----><!---->Visit our Discord<!----></a><!----></div><!----></div><!----></div> <button class="bottom-line svelte-islsbl"><div class="arrow-icon svelte-islsbl"><span class="material-symbols-outlined svelte-19dlr9u" aria-label="arrow_downward" style="font-size: 2rem;">arrow_downward</span><!----></div></button></section><!----> <div class="content svelte-1powqnx"><div class="wrapper svelte-1gc071t"><!----><div class="feature-box reversed svelte-1q4i447"><div class="media svelte-1q4i447"><!----><div class="img-wrapper  svelte-34vu9d"><!--[--><div class="skeleton-background svelte-34vu9d"></div><!--]--> <img src="/_app/immutable/assets/clustered.-BrZUlNB.png" alt="A screenshot of a map showcasing the new Clustered Shading rendering system." draggable="false" loading="lazy" class="svelte-34vu9d"></div><!----></div> <div class="content svelte-1q4i447"><!----><h2>New: Clustered Shading</h2> <p>Clustered Shading allows Portal 2: Community Edition to use real-time lighting techniques,
+					which greatly enhances the visuals.</p> <a class="button svelte-68f0a1 enabled" href="/clustered"><!----><!---->Explore Clustered Shading<!----></a><!----><!----></div></div><!----> <div class="feature-box  svelte-1q4i447"><div class="media svelte-1q4i447"><!----><div class="img-wrapper  svelte-34vu9d"><!--[--><div class="skeleton-background svelte-34vu9d"></div><!--]--> <img src="/_app/immutable/assets/schrodingers-lasers.Bq5st9Uv.webp" alt="A screenshot of a map showcasing the new Schrödinger cubes and lasers" draggable="false" loading="lazy" class="svelte-34vu9d"></div><!----></div> <div class="content svelte-1q4i447"><!----><h2>A new Way to Test</h2> <p>Adhesion gel, Schrödinger cubes, the paint gun and colored lasers are just a few of the
+					new testing elements available in Portal 2: Community Edition. Many of Portal 2's existing
+					testing elements have been enhanced with new features and bug fixes.</p><!----></div></div><!----> <div class="feature-box reversed svelte-1q4i447"><div class="media svelte-1q4i447"><!----><div class="img-wrapper  svelte-34vu9d"><!--[--><div class="skeleton-background svelte-34vu9d"></div><!--]--> <img src="/_app/immutable/assets/linux.LONcYM4p.webp" alt="A screenshot of the desktop of a Linux system, showing P2:CE running, as well as some other utilities from Linux" draggable="false" loading="lazy" class="svelte-34vu9d"></div><!----></div> <div class="content svelte-1q4i447"><!----><h2>Powered by Strata Source</h2> <p>Portal 2: Community Edition is powered by Strata Source, a modernized fork of the Source
+					Engine. Strata Source is the basis for multiple projects and includes a huge variety of
+					features, improvements and bug fixes. Notable features include a DirectX 11 renderer,
+					massively expanded map limits, backwards compatibility with Half-Life 2/Team Fortress 2
+					assets, and a modernized Hammer level editor.</p><!----></div></div><!----> <div class="feature-box  svelte-1q4i447"><div class="media svelte-1q4i447"><!----><div class="mockup-hint svelte-1powqnx"><p class="svelte-1powqnx">Early Mockup — Subject to change</p> <div class="img-wrapper  svelte-34vu9d"><!--[--><div class="skeleton-background svelte-34vu9d"></div><!--]--> <img src="/_app/immutable/assets/panorama.4FA3ofLC.webp" alt="A mockup of a new user interface for P2:CE" draggable="false" loading="lazy" class="svelte-34vu9d"></div><!----></div><!----></div> <div class="content svelte-1q4i447"><!----><h2>Revamped UI</h2> <p>Using Panorama, Source 2's UI framework, we've rebuilt Portal 2's UI from the ground up
+					with one thing in mind: user generated content! Panorama's flexibility will allow modders
+					to create their own beautiful, highly responsive UIs with minimal friction, all while our
+					main menu highlights quality content made by the community.</p><!----></div></div><!----> <div class="and-more svelte-1powqnx"><h2 class="svelte-1powqnx">But wait, there's more!</h2> <p class="svelte-1powqnx">We've been hard at work fixing hundreds of bugs and adding countless new features to give
+				you the best experience possible. Check out our changelogs to see what we've been up to!</p></div><!----></div><!----></div> <div class="wrapper svelte-1gc071t"><!----><div class="news svelte-sbx6j9"><div class="svelte-wfsisw" style="color: inherit; --f-size: 2.25rem;"><!----><!---->News<!----></div><!----> <!--[!--><div class="articles svelte-sbx6j9"><!--[!--><!--]--></div><!--]--></div><!----></div><!----><!----><!--]--><!----></main> <footer class="svelte-qm269n"><a class="svelte-hzex75" href="https://stratasource.org/" target="_self" style="--color: var(--colors-primary-500); --hover-color: white;"><!----><div class="img-wrapper  svelte-34vu9d" style="height: 4em;"><!--[--><div class="skeleton-background svelte-34vu9d"></div><!--]--> <img src="/_app/immutable/assets/strata-logo.BZh5-7aH.svg" alt="Strata logo" draggable="false" loading="lazy" class="svelte-34vu9d"></div><!----></a><!----> <div class="info svelte-qm269n"><div class="socials svelte-qm269n"><a class="svelte-hzex75" title="Steam" href="https://steampowered.com/app/440000" target="_blank" style="--color: white; --hover-color: var(--colors-primary-500);"><!----><!----><span class="fa-brands fa-steam svelte-xgo9j2" aria-label="steam"></span><!----><!----></a><!----> <a class="svelte-hzex75" title="Discord" href="https://discord.gg/rwrJMaXrEv" target="_blank" style="--color: white; --hover-color: var(--colors-primary-500);"><!----><!----><span class="fa-brands fa-discord svelte-xgo9j2" aria-label="discord"></span><!----><!----></a><!----> <a class="svelte-hzex75" title="GitHub" href="https://github.com/StrataSource/Portal-2-Community-Edition" target="_blank" style="--color: white; --hover-color: var(--colors-primary-500);"><!----><!----><span class="fa-brands fa-github svelte-xgo9j2" aria-label="github"></span><!----><!----></a><!----> <a class="svelte-hzex75" title="Twitter" href="https://twitter.com/portal2_ce" target="_blank" style="--color: white; --hover-color: var(--colors-primary-500);"><!----><!----><span class="fa-brands fa-twitter svelte-xgo9j2" aria-label="twitter"></span><!----><!----></a><!----> <a class="svelte-hzex75" title="Mastodon" href="https://mastodon.gamedev.place/@p2ce" target="_blank" style="--color: white; --hover-color: var(--colors-primary-500);"><!----><!----><span class="fa-brands fa-mastodon svelte-xgo9j2" aria-label="mastodon"></span><!----><!----></a><!----> <a class="svelte-hzex75" title="Open Collective" href="https://opencollective.com/portal-2-community-edition" target="_blank" style="--color: white; --hover-color: var(--colors-primary-500);"><!----><!----><div aria-label="openCollective" class="svelte-zv921x"><!----><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12c2.54 0 4.894-.79 6.834-2.135l-3.107-3.109a7.715 7.715 0 1 1 0-13.512l3.107-3.109A11.943 11.943 0 0 0 12 0zm9.865 5.166l-3.109 3.107A7.67 7.67 0 0 1 19.715 12a7.682 7.682 0 0 1-.959 3.727l3.109 3.107A11.943 11.943 0 0 0 24 12c0-2.54-.79-4.894-2.135-6.834z"/></svg><!----></div><!----><!----></a><!----></div> <div class="links"><a class="svelte-hzex75" href="/legal/privacy" style="--color: white; --hover-color: var(--colors-primary-500);"><!----><!---->Privacy Policy<!----></a><!----></div></div> <div class="legal svelte-qm269n"><div class="copyright">© 2025 P2:CE Team</div> <div class="disclaimer svelte-qm269n">Portal 2: Community Edition is a licensed fan-made mod for Portal 2, and was not developed,
+			nor is it endorsed by Valve Corporation. The P2:CE Team is in no way affiliated with Valve
+			Software. 'Half-Life 2', 'Portal', and 'Portal 2' are the intellectual property and are
+			registered trademarks of Valve Corporation.</div></div></footer><!----></div><!----><!--]--> <!--[!--><!--]--><!--]-->
+			
+			<script>
+				{
+					__sveltekit_5xbwpj = {
+						base: new URL(".", location).pathname.slice(0, -1),
+						env: null
+					};
 
-    window.firebaseReady = { auth, db, provider, signInWithPopup, onAuthStateChanged, signOut, addDoc, collection, query, where, orderBy, onSnapshot, doc, deleteDoc, setDoc };
-  </script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-    :root{--bg:#f8f9fa;--card:#fff;--accent:#4361ee;--text:#212529;}
-    *{margin:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-    body{min-height:100vh;background:var(--bg);color:var(--text);padding:2rem;display:flex;align-items:center;justify-content:center;}
-    .card{background:var(--card);padding:2.5rem;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.1);max-width:500px;width:100%;text-align:center;}
-    h1{font-size:2rem;background:linear-gradient(90deg,#4361ee,#3f37c9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-    .btn{background:var(--accent);color:white;padding:1rem 2rem;border:none;border-radius:50px;cursor:pointer;font-weight:600;margin:1rem 0;width:100%;font-size:1.1rem;}
-    .fab{position:fixed;bottom:20px;right:20px;width:60px;height:60px;background:var(--accent);color:white;border-radius:50%;font-size:2rem;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(67,97,238,0.4);z-index:10;}
-    .drop-zone{border:3px dashed var(--accent);border-radius:16px;padding:3rem;margin:1.5rem 0;cursor:pointer;background:rgba(67,97,238,0.05);transition:0.3s;}
-    .drop-zone:hover,.drop-zone.dragover{background:rgba(67,97,238,0.15);border-color:#3f37c9;}
-    .files{background:#f1f3f5;border-radius:12px;padding:1rem;max-height:40vh;overflow-y:auto;}
-    .file{background:white;padding:1rem;margin:0.5rem 0;border-radius:10px;display:flex;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
-    .file a{color:var(--accent);text-decoration:none;}
-    .transfer{margin:1rem 0;padding:1rem;background:#e7f3ff;border-radius:12px;}
-    .hidden{display:none !important;}
-    .mobile .card{height:100vh;border-radius:0;padding:1.5rem;}
-  </style>
-</head>
-<body>
+					const element = document.currentScript.parentElement;
 
-  <!-- LOGIN -->
-  <div id="login" class="card">
-    <h1>Mon Cloud Pro</h1>
-    <p>Connexion 100 % stable</p>
-    <button class="btn" id="googleBtn">Se connecter avec Google</button>
-  </div>
+					import("./_app/env.js").then(({ env }) => {
+						__sveltekit_5xbwpj.env = env;
 
-  <!-- APP -->
-  <div id="app" class="card hidden">
-    <h1>Salut <span id="userName">?</span> !</h1>
-    <p id="userEmail" style="opacity:0.7;margin-bottom:1rem;"></p>
-    <button class="btn" id="logout" style="background:#e03131;">Déconnexion</button>
-
-    <div class="transfer">
-      <input type="email" id="destEmail" placeholder="Email du destinataire" style="width:100%;padding:0.8rem;border-radius:8px;border:1px solid #ccc;margin:0.5rem 0;">
-      <button class="btn" id="sendBtn">Envoyer le fichier sélectionné</button>
-    </div>
-
-    <div class="drop-zone" id="zone">
-      <p>Ajouter des fichiers</p>
-      <input type="file" id="picker" multiple>
-    </div>
-    <div class="files" id="list"></div>
-    <div class="fab" id="fab">+</div>
-  </div>
-
-  <script type="module">
-    const { auth, db, provider, signInWithPopup, onAuthStateChanged, signOut, addDoc, collection, query, where, orderBy, onSnapshot, doc, deleteDoc, setDoc } = window.firebaseReady;
-
-    const loginDiv = document.getElementById('login');
-    const appDiv = document.getElementById('app');
-    const googleBtn = document.getElementById('googleBtn');
-    const logout = document.getElementById('logout');
-    const userName = document.getElementById('userName');
-    const userEmail = document.getElementById('userEmail');
-    const zone = document.getElementById('zone');
-    const picker = document.getElementById('picker');
-    const list = document.getElementById('list');
-    const fab = document.getElementById('fab');
-    const destEmail = document.getElementById('destEmail');
-    const sendBtn = document.getElementById('sendBtn');
-
-    let currentUser = null;
-    let selectedFile = null;
-
-    // ==== CONNEXION (bug fixé) ====
-    googleBtn.onclick = async () => {
-      try {
-        await signInWithPopup(auth, provider);
-      } catch (e) { alert("Erreur : " + e.message); }
-    };
-
-    logout.onclick = () => signOut(auth);
-
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        currentUser = user;
-        loginDiv.classList.add('hidden');
-        appDiv.classList.remove('hidden');
-        userName.textContent = user.displayName.split(' ')[0];
-        userEmail.textContent = user.email;
-        saveUserProfile(user);
-        loadMyFiles();
-      } else {
-        loginDiv.classList.remove('hidden');
-        appDiv.classList.add('hidden');
-        list.innerHTML = '';
-      }
-    });
-
-    // ==== MOBILE ====
-    if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
-      document.body.classList.add('mobile');
-      fab.onclick = () => picker.click();
-      zone.onclick = () => picker.click();
-    } else {
-      zone.onclick = () => picker.click();
-    }
-
-    // ==== UPLOAD ====
-    picker.onchange = e => uploadFiles(e.target.files);
-    zone.ondrop = e => { e.preventDefault(); uploadFiles(e.dataTransfer.files); zone.classList.remove('dragover'); };
-    ['dragover','dragenter'].forEach(ev => zone.addEventListener(ev, e => {e.preventDefault(); zone.classList.add('dragover');}));
-    zone.ondragleave = () => zone.classList.remove('dragover');
-
-    async function uploadFiles(files) {
-      for (let file of files) {
-        const base64 = await fileToBase64(file);
-        const fileData = {
-          name: file.name,
-          data: base64,
-          owner: currentUser.uid,
-          ownerEmail: currentUser.email,
-          timestamp: Date.now()
-        };
-        const ref = await addDoc(collection(db, 'files'), fileData);
-        addFileToList({...fileData, id: ref.id});
-      }
-    }
-
-    function fileToBase64(file) {
-      return new Promise((res, rej) => {
-        const reader = new FileReader();
-        reader.onload = () => res(reader.result);
-        reader.onerror = rej;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    // ==== AFFICHAGE ====
-    function addFileToList(file) {
-      const div = document.createElement('div');
-      div.className = 'file';
-      div.innerHTML = `
-        <span><a href="${file.data}" download="${file.name}">${file.name}</a></span>
-        <span style="cursor:pointer;color:#e03131;" onclick="deleteFile('${file.id}', this)">×</span>
-      `;
-      div.onclick = (e) => {
-        if (!e.target.matches('a, span')) {
-          selectedFile = file;
-          destEmail.placeholder = `Envoyer ${file.name} à...`;
-        }
-      };
-      list.prepend(div);
-    }
-
-    window.deleteFile = async (id, el) => {
-      await deleteDoc(doc(db, 'files', id));
-      el.parentElement.remove();
-    };
-
-    // ==== CHARGER FICHIERS ====
-    function loadMyFiles() {
-      const q = query(collection(db, 'files'), where('owner', '==', currentUser.uid), orderBy('timestamp', 'desc'));
-      onSnapshot(q, snap => {
-        list.innerHTML = '';
-        snap.forEach(d => addFileToList({id: d.id, ...d.data()}));
-      });
-    }
-
-    // ==== TRANSFERT ====
-    sendBtn.onclick = async () => {
-      if (!selectedFile) return alert('Clique sur un fichier');
-      const email = destEmail.value.trim();
-      if (!email) return alert('Entre un email');
-
-      const q = query(collection(db, 'users'), where('email', '==', email));
-      const snap = await getFirestore().getDocs(q);
-      if (snap.empty) return alert('Utilisateur introuvable');
-
-      const targetUser = snap.docs[0].data();
-      const copy = {...selectedFile, owner: targetUser.uid, ownerEmail: email};
-      delete copy.id;
-      await addDoc(collection(db, 'files'), copy);
-      alert(`Envoyé à ${email} !`);
-      destEmail.value = '';
-    };
-
-    // ==== SAUVEGARDE PROFIL ====
-    async function saveUserProfile(user) {
-      await setDoc(doc(db, 'users', user.uid), {
-        email: user.email,
-        name: user.displayName
-      }, { merge: true });
-    }
-  </script>
-</body>
+						Promise.all([
+							import("./_app/immutable/entry/start.B76io9no.js"),
+							import("./_app/immutable/entry/app.BA01gi8H.js")
+						]).then(([kit, app]) => {
+							kit.start(app, element, {
+									node_ids: [0, 3],
+									data: [null,null],
+									form: null,
+									error: null
+								});
+						});
+					});
+				}
+			</script>
+		</div>
+	</body>
 </html>
