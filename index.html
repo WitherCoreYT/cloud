@@ -4,26 +4,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mon Cloud Pro</title>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <!-- Firebase 10+ MODERNE (plus de bug popup) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // ========= COLLER TA CONFIG FIREBASE ICI =========
+    const firebaseConfig = {
+      apiKey: "AIzaSy...",
+      authDomain: "ton-projet.firebaseapp.com",
+      projectId: "ton-projet",
+      storageBucket: "ton-projet.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abcdef123456"
+    };
+    // ================================================
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    window.firebaseReady = { auth, db, provider, signInWithPopup, onAuthStateChanged, signOut, addDoc, collection, query, where, orderBy, onSnapshot, doc, deleteDoc, setDoc };
+  </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
     :root{--bg:#f8f9fa;--card:#fff;--accent:#4361ee;--text:#212529;}
     *{margin:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-    body{min-height:100vh;background:var(--bg);color:var(--text);padding:2rem;}
-    .card{background:var(--card);padding:2rem;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.1);max-width:500px;margin:auto;text-align:center;}
-    .mobile .card{height:100vh;border-radius:0;padding:1.5rem;}
+    body{min-height:100vh;background:var(--bg);color:var(--text);padding:2rem;display:flex;align-items:center;justify-content:center;}
+    .card{background:var(--card);padding:2.5rem;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.1);max-width:500px;width:100%;text-align:center;}
     h1{font-size:2rem;background:linear-gradient(90deg,#4361ee,#3f37c9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-    .btn{background:var(--accent);color:white;padding:1rem 2rem;border:none;border-radius:50px;cursor:pointer;font-weight:600;margin:1rem 0;}
+    .btn{background:var(--accent);color:white;padding:1rem 2rem;border:none;border-radius:50px;cursor:pointer;font-weight:600;margin:1rem 0;width:100%;font-size:1.1rem;}
     .fab{position:fixed;bottom:20px;right:20px;width:60px;height:60px;background:var(--accent);color:white;border-radius:50%;font-size:2rem;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(67,97,238,0.4);z-index:10;}
     .drop-zone{border:3px dashed var(--accent);border-radius:16px;padding:3rem;margin:1.5rem 0;cursor:pointer;background:rgba(67,97,238,0.05);transition:0.3s;}
-    .drop-zone.dragover{background:rgba(67,97,238,0.15);border-color:#3f37c9;}
+    .drop-zone:hover,.drop-zone.dragover{background:rgba(67,97,238,0.15);border-color:#3f37c9;}
     .files{background:#f1f3f5;border-radius:12px;padding:1rem;max-height:40vh;overflow-y:auto;}
     .file{background:white;padding:1rem;margin:0.5rem 0;border-radius:10px;display:flex;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
     .file a{color:var(--accent);text-decoration:none;}
     .transfer{margin:1rem 0;padding:1rem;background:#e7f3ff;border-radius:12px;}
     .hidden{display:none !important;}
+    .mobile .card{height:100vh;border-radius:0;padding:1.5rem;}
   </style>
 </head>
 <body>
@@ -31,19 +52,19 @@
   <!-- LOGIN -->
   <div id="login" class="card">
     <h1>Mon Cloud Pro</h1>
-    <p>Connecte-toi avec Google</p>
+    <p>Connexion 100 % stable</p>
     <button class="btn" id="googleBtn">Se connecter avec Google</button>
   </div>
 
   <!-- APP -->
   <div id="app" class="card hidden">
-    <h1>Bonjour <span id="userName"></span></h1>
-    <p id="userEmail" style="opacity:0.7;"></p>
+    <h1>Salut <span id="userName">?</span> !</h1>
+    <p id="userEmail" style="opacity:0.7;margin-bottom:1rem;"></p>
+    <button class="btn" id="logout" style="background:#e03131;">Déconnexion</button>
 
-    <!-- TRANSFERT -->
     <div class="transfer">
       <input type="email" id="destEmail" placeholder="Email du destinataire" style="width:100%;padding:0.8rem;border-radius:8px;border:1px solid #ccc;margin:0.5rem 0;">
-      <button class="btn" id="sendBtn" style="width:100%;">Envoyer le fichier sélectionné</button>
+      <button class="btn" id="sendBtn">Envoyer le fichier sélectionné</button>
     </div>
 
     <div class="drop-zone" id="zone">
@@ -54,25 +75,13 @@
     <div class="fab" id="fab">+</div>
   </div>
 
-  <script>
-    // ===== COLLER TA CONFIG FIREBASE ICI =====
-    const firebaseConfig = {
-      apiKey: "AIzaSy...",
-      authDomain: "ton-projet.firebaseapp.com",
-      projectId: "ton-projet",
-      storageBucket: "ton-projet.appspot.com",
-      messagingSenderId: "123456789",
-      appId: "1:123456789:web:abcdef123456"
-    };
-    // ========================================
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
+  <script type="module">
+    const { auth, db, provider, signInWithPopup, onAuthStateChanged, signOut, addDoc, collection, query, where, orderBy, onSnapshot, doc, deleteDoc, setDoc } = window.firebaseReady;
 
     const loginDiv = document.getElementById('login');
     const appDiv = document.getElementById('app');
     const googleBtn = document.getElementById('googleBtn');
+    const logout = document.getElementById('logout');
     const userName = document.getElementById('userName');
     const userEmail = document.getElementById('userEmail');
     const zone = document.getElementById('zone');
@@ -85,27 +94,32 @@
     let currentUser = null;
     let selectedFile = null;
 
-    // === CONNEXION GOOGLE ===
-    googleBtn.onclick = () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider);
+    // ==== CONNEXION (bug fixé) ====
+    googleBtn.onclick = async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (e) { alert("Erreur : " + e.message); }
     };
 
-    auth.onAuthStateChanged(user => {
+    logout.onclick = () => signOut(auth);
+
+    onAuthStateChanged(auth, user => {
       if (user) {
         currentUser = user;
         loginDiv.classList.add('hidden');
         appDiv.classList.remove('hidden');
         userName.textContent = user.displayName.split(' ')[0];
         userEmail.textContent = user.email;
+        saveUserProfile(user);
         loadMyFiles();
       } else {
         loginDiv.classList.remove('hidden');
         appDiv.classList.add('hidden');
+        list.innerHTML = '';
       }
     });
 
-    // === MOBILE DETECTION ===
+    // ==== MOBILE ====
     if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
       document.body.classList.add('mobile');
       fab.onclick = () => picker.click();
@@ -114,41 +128,46 @@
       zone.onclick = () => picker.click();
     }
 
-    // === UPLOAD ===
+    // ==== UPLOAD ====
     picker.onchange = e => uploadFiles(e.target.files);
     zone.ondrop = e => { e.preventDefault(); uploadFiles(e.dataTransfer.files); zone.classList.remove('dragover'); };
-    zone.ondragover = e => { e.preventDefault(); zone.classList.add('dragover'); };
+    ['dragover','dragenter'].forEach(ev => zone.addEventListener(ev, e => {e.preventDefault(); zone.classList.add('dragover');}));
     zone.ondragleave = () => zone.classList.remove('dragover');
 
-    function uploadFiles(files) {
-      [...files].forEach(file => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const fileData = {
-            name: file.name,
-            data: reader.result,
-            owner: currentUser.uid,
-            ownerEmail: currentUser.email,
-            timestamp: Date.now()
-          };
-          db.collection('files').add(fileData).then(ref => {
-            addFileToList({...fileData, id: ref.id});
-          });
+    async function uploadFiles(files) {
+      for (let file of files) {
+        const base64 = await fileToBase64(file);
+        const fileData = {
+          name: file.name,
+          data: base64,
+          owner: currentUser.uid,
+          ownerEmail: currentUser.email,
+          timestamp: Date.now()
         };
+        const ref = await addDoc(collection(db, 'files'), fileData);
+        addFileToList({...fileData, id: ref.id});
+      }
+    }
+
+    function fileToBase64(file) {
+      return new Promise((res, rej) => {
+        const reader = new FileReader();
+        reader.onload = () => res(reader.result);
+        reader.onerror = rej;
         reader.readAsDataURL(file);
       });
     }
 
-    // === AFFICHAGE ===
+    // ==== AFFICHAGE ====
     function addFileToList(file) {
       const div = document.createElement('div');
       div.className = 'file';
       div.innerHTML = `
         <span><a href="${file.data}" download="${file.name}">${file.name}</a></span>
-        <span style="cursor:pointer;color:#e03131;" onclick="this.parentElement.remove(); db.collection('files').doc('${file.id}').delete();">×</span>
+        <span style="cursor:pointer;color:#e03131;" onclick="deleteFile('${file.id}', this)">×</span>
       `;
       div.onclick = (e) => {
-        if (e.target.tagName !== 'A' && e.target.tagName !== 'SPAN') {
+        if (!e.target.matches('a, span')) {
           selectedFile = file;
           destEmail.placeholder = `Envoyer ${file.name} à...`;
         }
@@ -156,44 +175,45 @@
       list.prepend(div);
     }
 
-    // === CHARGER MES FICHIERS ===
+    window.deleteFile = async (id, el) => {
+      await deleteDoc(doc(db, 'files', id));
+      el.parentElement.remove();
+    };
+
+    // ==== CHARGER FICHIERS ====
     function loadMyFiles() {
-      list.innerHTML = '';
-      db.collection('files').where('owner', '==', currentUser.uid).orderBy('timestamp', 'desc').onSnapshot(snap => {
+      const q = query(collection(db, 'files'), where('owner', '==', currentUser.uid), orderBy('timestamp', 'desc'));
+      onSnapshot(q, snap => {
         list.innerHTML = '';
-        snap.forEach(doc => addFileToList({id: doc.id, ...doc.data()}));
+        snap.forEach(d => addFileToList({id: d.id, ...d.data()}));
       });
     }
 
-    // === TRANSFERT ===
-    sendBtn.onclick = () => {
-      if (!selectedFile) return alert('Clique sur un fichier d\'abord');
+    // ==== TRANSFERT ====
+    sendBtn.onclick = async () => {
+      if (!selectedFile) return alert('Clique sur un fichier');
       const email = destEmail.value.trim();
       if (!email) return alert('Entre un email');
 
-      db.collection('users').where('email', '==', email).get().then(snap => {
-        if (snap.empty) return alert('Utilisateur non trouvé');
+      const q = query(collection(db, 'users'), where('email', '==', email));
+      const snap = await getFirestore().getDocs(q);
+      if (snap.empty) return alert('Utilisateur introuvable');
 
-        snap.forEach(userDoc => {
-          const copy = {...selectedFile, owner: userDoc.data().uid, ownerEmail: email};
-          delete copy.id;
-          db.collection('files').add(copy).then(() => {
-            alert(`Envoyé à ${email} !`);
-            destEmail.value = '';
-          });
-        });
-      });
+      const targetUser = snap.docs[0].data();
+      const copy = {...selectedFile, owner: targetUser.uid, ownerEmail: email};
+      delete copy.id;
+      await addDoc(collection(db, 'files'), copy);
+      alert(`Envoyé à ${email} !`);
+      destEmail.value = '';
     };
 
-    // === SAUVEGARDE EMAIL UTILISATEUR ===
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        db.collection('users').doc(user.uid).set({
-          email: user.email,
-          name: user.displayName
-        }, {merge: true});
-      }
-    });
+    // ==== SAUVEGARDE PROFIL ====
+    async function saveUserProfile(user) {
+      await setDoc(doc(db, 'users', user.uid), {
+        email: user.email,
+        name: user.displayName
+      }, { merge: true });
+    }
   </script>
 </body>
 </html>
