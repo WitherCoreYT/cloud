@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Cloud</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        :root{
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --accent: #4361ee;
+            --text: #212529;
+            --light: #f1f3f5;
+        }
+        *{margin:0;box-sizing:border-box;}
+        body{
+            margin:0; min-height:100vh;
+            font-family:'Inter',sans-serif;
+            background:var(--bg);
+            color:var(--text);
+            display:flex; align-items:center; justify-content:center;
+            padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        /* === DESKTOP === */
+        .desktop .card{
+            background:var(--card);
+            padding:2.5rem;
+            width:90%; max-width:460px;
+            border-radius:20px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.1);
+            text-align:center;
+        }
+        .desktop h1{
+            font-size:2rem; margin-bottom:0.5rem;
+            background:linear-gradient(90deg,#4361ee,#3f37c9);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+        }
+
+        /* === MOBILE === */
+        .mobile{
+            background:#f1f3f5;
+        }
+        .mobile .card{
+            width:100%; height:100vh;
+            padding:1.5rem; border-radius:0;
+            display:flex; flex-direction:column;
+        }
+        .mobile h1{
+            font-size:1.6rem; text-align:center;
+            color:var(--accent); margin-bottom:0.5rem;
+        }
+        .mobile .hint{
+            font-size:0.95rem; text-align:center; opacity:0.7; margin-bottom:1rem;
+        }
+
+        /* ZONE COMMUNE */
+        .drop-zone{
+            flex:1; min-height:280px;
+            border:3px dashed var(--accent);
+            border-radius:16px;
+            margin:1.5rem 0;
+            padding:2rem;
+            cursor:pointer;
+            background:rgba(67,97,238,0.05);
+            display:flex; flex-direction:column;
+            justify-content:center; align-items:center;
+            transition:0.3s;
+        }
+        .drop-zone:hover{ background:rgba(67,97,238,0.1); }
+        .drop-zone.dragover{
+            background:rgba(67,97,238,0.15);
+            border-color:#3f37c9;
+            transform:scale(1.02);
+        }
+        .drop-zone p{
+            margin:0.5rem 0; font-weight:600; font-size:1.1rem;
+        }
+
+        /* LISTE */
+        .files{
+            background:var(--light);
+            border-radius:12px; padding:1rem;
+            max-height:40vh; overflow-y:auto;
+        }
+        .file{
+            background:#fff; padding:0.9rem;
+            margin:0.5rem 0; border-radius:10px;
+            display:flex; justify-content:space-between;
+            align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.05);
+        }
+        .file a{
+            color:var(--accent); text-decoration:none; font-weight:500;
+        }
+        .delete{
+            color:#e03131; font-weight:bold; cursor:pointer; font-size:1.3rem;
+        }
+
+        /* BOUTON FLOTTANT MOBILE */
+        .fab{
+            position:fixed; bottom:20px; right:20px;
+            width:56px; height:56px;
+            background:var(--accent); color:#fff;
+            border-radius:50%; box-shadow:0 6px 20px rgba(67,97,238,0.4);
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.8rem; cursor:pointer; z-index:10;
+        }
+
+        input[type="file"]{display:none;}
+        .hidden{display:none !important;}
+    </style>
+</head>
+<body>
+
+    <!-- DESKTOP -->
+    <div class="card hidden" id="desktop">
+        <h1>Mon Cloud</h1>
+        <p style="opacity:0.7;margin-bottom:1rem;">Glisse ou clique pour uploader</p>
+        <div class="drop-zone" id="zoneDesk">
+            <p>Depose ici</p>
+            <input type="file" id="pickerDesk" multiple>
+        </div>
+        <div class="files" id="listDesk"></div>
+    </div>
+
+    <!-- MOBILE -->
+    <div class="card hidden" id="mobile">
+        <h1>Mon Cloud</h1>
+        <div class="hint">Appuie sur + ou ici</div>
+        <div class="drop-zone" id="zoneMob">
+            <p>Ajouter des fichiers</p>
+            <input type="file" id="pickerMob" multiple>
+        </div>
+        <div class="files" id="listMob"></div>
+        <div class="fab" id="fab">+</div>
+    </div>
+
+    <script>
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || screen.width < 768;
+        const desktop = document.getElementById('desktop');
+        const mobile  = document.getElementById('mobile');
+        document.body.className = isMobile ? 'mobile' : 'desktop';
+        (isMobile ? mobile : desktop).classList.remove('hidden');
+
+        // === INIT ===
+        const zone   = isMobile ? document.getElementById('zoneMob')  : document.getElementById('zoneDesk');
+        const picker = isMobile ? document.getElementById('pickerMob'): document.getElementById('pickerDesk');
+        const list   = isMobile ? document.getElementById('listMob')  : document.getElementById('listDesk');
+
+        // Clic = ouvre explorateur
+        zone.onclick = () => picker.click();
+        if (isMobile) document.getElementById('fab').onclick = () => picker.click();
+
+        // Drag & Drop
+        ['dragenter','dragover'].forEach(e=>zone.addEventListener(e,()=>zone.classList.add('dragover')));
+        ['dragleave','drop'].forEach(e=>zone.addEventListener(e,()=>zone.classList.remove('dragover')));
+        ['dragenter','dragover','dragleave','drop'].forEach(e=>zone.addEventListener(e,e=>{e.preventDefault();e.stopPropagation();}));
+        zone.ondrop = e => handle(e.dataTransfer.files);
+        picker.onchange = e => handle(e.target.files);
+
+        function handle(files){
+            [...files].forEach(f => upload(f));
+        }
+
+        function upload(file){
+            const fd = new FormData();
+            fd.append('file', file);
+            fetch('upload.php', {method:'POST', body:fd})
+            .then(r=>r.json())
+            .then(res=>{
+                if(res.success) addFile(file.name, res.url);
+                else alert('Erreur');
+            });
+        }
+
+        function addFile(name, url){
+            const div = document.createElement('div');
+            div.className='file';
+            div.innerHTML = `<span><a href="${url}" target="_blank">${name}</a></span>
+                             <span class="delete" onclick="this.parentElement.remove()">X</span>`;
+            list.prepend(div);
+        }
+
+        // Chargement initial
+        fetch('list.php')
+        .then(r=>r.json())
+        .then(files=>files.forEach(f=>addFile(f.name,f.url)));
+
+        // Vibration mobile
+        if(isMobile && navigator.vibrate) zone.ondrop = e=>{navigator.vibrate(30); handle(e.dataTransfer.files);};
+    </script>
+</body>
+</html>
